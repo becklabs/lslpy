@@ -22,7 +22,7 @@ class Immediate(Contract):
 
 class Function(Contract):
     def __init__(
-        self, arguments: tuple[Contract], result: Contract, raises: BaseException
+        self, arguments: tuple[Contract], result: Contract, raises: BaseException | None = None
     ):
         self.arguments = arguments
         self.result = result
@@ -43,11 +43,12 @@ class Function(Contract):
             if not self.result.check(result):
                 raise ContractViolation(f"{self.func} returned {result}, expected {self.result}")
 
+
         except Exception as e:
-            if isinstance(e, self.raises):
-                raise e
+            if self.raises is not None and not isinstance(e, self.raises):
+                raise ContractViolation(f"{self.func} returned {e}, expected {self.raises}") from e
             else:
-                raise ContractViolation("Contract violation") from e
+                raise e
 
         return result
 
