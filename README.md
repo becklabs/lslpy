@@ -1,6 +1,6 @@
 # lslpy
 
-`lslpy` is a library that allows for contract-based and property-based testing in Python, inspired by [LSL](https://docs.racket-lang.org/lsl/index.html).
+`lslpy` is a library that allows for contract-based and property-based randomized testing in Python, inspired by [LSL](https://docs.racket-lang.org/lsl/index.html).
 
 ## Installation
 
