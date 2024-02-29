@@ -2,7 +2,7 @@
 
 `lslpy` is a library that allows for contract-based and property-based testing in Python, inspired by [LSL](https://docs.racket-lang.org/lsl/index.html).
 
-#### Installation
+## Installation
 
 lslpy requires `python3.9` or higher.
 
@@ -18,7 +18,7 @@ git clone https://github.com/becklabs/lslpy.git && cd lslpy
 pip3 install -e .
 ```
 
-#### Example Usage
+## Example Usage
 
 Property-based testing of `reverse`:
 
