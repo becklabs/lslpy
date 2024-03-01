@@ -1,7 +1,7 @@
 import random
 
 from .base import Contract
-from .exceptions import ContractViolation
+from .exceptions import ContractViolation, LowFuel
 
 
 class Immediate(Contract):
@@ -83,26 +83,29 @@ class Tuple(Contract):
 
 
 class OneOf(Contract):
-    def __init__(self, *contracts):
-        self.contracts = contracts
+    def __init__(self, *disjuncts):
+        self.disjuncts = disjuncts
 
     def check(self, x):
-        return any([contract.check(x) for contract in self.contracts])
+        return any([contract.check(x) for contract in self.disjuncts])
 
     def generate(self, fuel):
-        return random.choice(self.contracts).generate(fuel)
+        return random.choice(self.disjuncts).generate(fuel)
 
 
 class AllOf(Contract):
-    def __init__(self, *contracts):
-        self.contracts = contracts
+    def __init__(self, *conjuncts):
+        self.conjuncts = conjuncts
 
     def check(self, x):
-        return all([contract.check(x) for contract in self.contracts])
+        return all([contract.check(x) for contract in self.conjuncts])
 
     def generate(self, fuel):
-        raise NotImplementedError
-
+        for _ in range(fuel):
+            x = random.choice(self.conjuncts).generate(fuel)
+            if all([contract.check(x) for contract in self.conjuncts]):
+                return x
+            raise LowFuel()
 
 class Struct(Contract): ...
 
