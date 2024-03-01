@@ -53,10 +53,11 @@ class Function(Contract):
         return result
 
     def check(self, x):
+        self.visit(x)
         return True
 
     def generate(self, fuel):
-        raise NotImplementedError
+        return lambda *args: self.result.generate(fuel)
 
 
 class List(Contract):
