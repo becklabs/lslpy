@@ -3,7 +3,7 @@ class ContractViolation(Exception):
         self.message = message
         super().__init__(self.message)
 
-class LowFuel(Exception):
-    def __init__(self, message="Ran out of fuel during generate") -> None:
-        self.message = message
-        super().__init__(message)
+class GenerateError(Exception):
+    def __init__(self, contract) -> None:
+        self.message = f"Cannot generate {contract}"
+        super().__init__(self.message)

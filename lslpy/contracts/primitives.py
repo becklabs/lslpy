@@ -1,7 +1,7 @@
 import random
 
 from .base import Contract
-from .exceptions import ContractViolation, LowFuel
+from .exceptions import ContractViolation, GenerateError
 
 
 class Immediate(Contract):
@@ -106,7 +106,7 @@ class AllOf(Contract):
             x = random.choice(self.conjuncts).generate(fuel)
             if all([contract.check(x) for contract in self.conjuncts]):
                 return x
-            raise LowFuel()
+            raise GenerateError(f"AllOf({' '.join([str(i) for i in self.conjuncts])})")
 
 class Struct(Contract): ...
 
