@@ -57,7 +57,7 @@ class String(Immediate):
         super().__init__(
             check=lambda x: isinstance(x, str),
             generate=lambda fuel: "".join(
-                random.choices(string.ascii_letters + string.digits, k=fuel)
+                random.choices(string.ascii_letters + string.digits, k=random.randint(0, fuel))
             ),
         )
 

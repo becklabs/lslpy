@@ -71,7 +71,7 @@ class List(Contract):
         return is_iterable(x) and all([self.contract.check(e) for e in x])
 
     def generate(self, fuel):
-        return [self.contract.generate(fuel) for _ in range(fuel)]
+        return [self.contract.generate(fuel) for _ in range(random.randint(0, fuel))]
 
 
 class Tuple(Contract):
