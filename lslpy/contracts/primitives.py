@@ -2,6 +2,7 @@ import random
 
 from .base import Contract
 from .exceptions import ContractViolation, GenerateError
+from .util import format_contract
 
 
 class Immediate(Contract):
@@ -37,11 +38,11 @@ class Function(Contract):
         for arg, contract in zip(args, self.arguments):
             if not contract.check(arg):
                 # TODO: Improve contract violation messages
-                raise ContractViolation(f"{self.func} expected {self.arguments}, got {args}")
+                raise ContractViolation(f"{self.func} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(args)})")
         try:
             result = self.func(*args)
             if not self.result.check(result):
-                raise ContractViolation(f"{self.func} returned {result}, expected {self.result}")
+                raise ContractViolation(f"{self.func} returned {result}, expected {format_contract(self.result)}")
 
 
         except Exception as e:
@@ -58,7 +59,7 @@ class Function(Contract):
 
     def generate(self, fuel):
         return lambda *args: self.result.generate(fuel)
-
+    
 
 class List(Contract):
     def __init__(self, contract):

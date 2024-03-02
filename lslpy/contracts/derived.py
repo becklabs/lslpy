@@ -7,6 +7,7 @@ from .primitives import Immediate
 class Constant(Immediate):
     def __init__(self, value):
         super().__init__(check=lambda x: x is value, generate=lambda fuel: value)
+        self.value = value
 
 
 class true(Constant):
@@ -59,3 +60,4 @@ class String(Immediate):
                 random.choices(string.ascii_letters + string.digits, k=fuel)
             ),
         )
+

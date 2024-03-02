@@ -1,6 +1,7 @@
 
 from .base import Contract
 from .primitives import Function
+from .exceptions import ContractViolation
 
 CHECK_CONTRACT_FUEL = 100
 
@@ -18,7 +19,10 @@ class contract:
 def check_contract(id: Function, attempts: int = 100):
     for _ in range(attempts):
         args = [arg.generate(CHECK_CONTRACT_FUEL) for arg in id.arguments]
-        id(*args)
+        try:
+            id(*args)
+        except ContractViolation as e:
+            raise ContractViolation(f"Found counterexample: {id.func}({', '.join([str(a) for a in args])})") from e
 
 def contract_generate(id: Contract, fuel: int):
     return id.generate(fuel)
