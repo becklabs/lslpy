@@ -2,7 +2,7 @@ import random
 
 from .base import Contract
 from .exceptions import ContractViolation, GenerateError
-from .util import format_contract
+from .util import format_contract, is_iterable
 
 
 class Immediate(Contract):
@@ -54,20 +54,21 @@ class Function(Contract):
         return result
 
     def check(self, x):
-        self.visit(x)
-        return True
+        self.visit(x) # Impose a check later
+        return callable(x)
 
     def generate(self, fuel):
         return lambda *args: self.result.generate(fuel)
     
 
 class List(Contract):
-    def __init__(self, contract):
+    from .derived import Any
+    def __init__(self, contract: Contract = Any()):
         self.contract = contract
 
     def check(self, x):
         # TODO: decide whether to check if type == list here
-        return all([self.contract.check(e) for e in x])
+        return is_iterable(x) and all([self.contract.check(e) for e in x])
 
     def generate(self, fuel):
         return [self.contract.generate(fuel) for _ in range(fuel)]
@@ -78,7 +79,8 @@ class Tuple(Contract):
         self.contracts = contracts
 
     def check(self, x):
-        return all([contract.check(e) for e, contract in zip(x, self.contracts)])
+        # TODO: decide whether to check if type == tuple here
+        return is_iterable(x) and all([contract.check(e) for e, contract in zip(x, self.contracts)])
 
     def generate(self, fuel):
         return (contract.generate(fuel) for contract in self.contracts)

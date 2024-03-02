@@ -24,3 +24,10 @@ def format_contract(c: Contract):
     else:
         return c.__class__.__name__
 
+def is_iterable(obj):
+    try:
+        iter(obj)
+        return True
+    except TypeError:
+        return False
+
