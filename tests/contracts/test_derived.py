@@ -1,7 +1,7 @@
 import unittest
 
 from lslpy.contracts.derived import (Boolean, Integer, Natural, Real, String,
-                                     false, true)
+                                     false, true, Any)
 
 
 class TestDerivedContracts(unittest.TestCase):
@@ -46,6 +46,17 @@ class TestDerivedContracts(unittest.TestCase):
         self.assertTrue(contract.check("test"))
         self.assertFalse(contract.check(1))
         self.assertFalse(contract.check(True))
+    
+    def test_any(self):
+        contract = Any()
+        self.assertTrue(contract.check(True))
+        self.assertTrue(contract.check(False))
+        self.assertTrue(contract.check(-1))
+        self.assertTrue(contract.check(1))
+        self.assertTrue(contract.check(1.0))
+        self.assertTrue(contract.check("hello"))
+        contract.generate(100)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -61,3 +61,12 @@ class String(Immediate):
             ),
         )
 
+
+class Any(Immediate):
+    def __init__(self):
+        super().__init__(
+            check=lambda x: True,
+            generate=lambda fuel: random.choice(
+                [Boolean(), Integer(), Real(), Natural(), String()]
+            ).generate(fuel),
+        )
