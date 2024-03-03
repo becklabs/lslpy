@@ -28,18 +28,21 @@ class TestDerivedContracts(unittest.TestCase):
         self.assertTrue(contract.check(1))
         self.assertFalse(contract.check(-1))
         self.assertFalse(contract.check(1.5))
+        self.assertTrue(contract.generate(1) >= 0)
 
     def test_integer(self):
         contract = Integer()
         self.assertTrue(contract.check(1))
         self.assertTrue(contract.check(-1))
         self.assertFalse(contract.check(1.5))
+        self.assertTrue(isinstance(contract.generate(1), int))
 
     def test_real(self):
         contract = Real()
         self.assertTrue(contract.check(1.5))
         self.assertFalse(contract.check(1))
         self.assertFalse(contract.check("1.5"))
+        self.assertTrue(isinstance(contract.generate(1), float))
 
     def test_string(self):
         contract = String()
