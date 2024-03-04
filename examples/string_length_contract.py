@@ -1,9 +1,8 @@
 from lslpy.contracts import contract, check_contract
-from lslpy.contracts.derived import String, Natural
-from lslpy.contracts.primitives import Function
+from lslpy.contracts.aliases import Natural, String
 
-@contract(Function(arguments=(String(),), result=Natural()))
-def string_length(s):
+@contract()
+def string_length(s: String) -> Natural:
     return len(s)
 
 check_contract(string_length)

@@ -1,14 +1,10 @@
 from lslpy.contracts import contract, check_contract
-from lslpy.contracts.primitives import Function, List
-from lslpy.contracts.derived import Any, String, Integer, Boolean
+
+from lslpy.contracts.aliases import Callable, Any, List, String, Integer, Boolean
 
 
-@contract(
-    Function(
-        arguments=(Function(arguments=[Any()], result=Any()), List()), result=List()
-    )
-)
-def general_map(f, lst):
+@contract()
+def general_map(f: Callable[[Any], Any], lst: List) -> List:
     res = []
     for e in lst:
         res.append(f(e))
@@ -18,13 +14,8 @@ def general_map(f, lst):
 check_contract(general_map)
 
 
-@contract(
-    Function(
-        arguments=[Function(arguments=[String()], result=Integer()), List(String())],
-        result=List(Integer()),
-    )
-)
-def string_to_int_map(f, lst):
+@contract()
+def string_to_int_map(f: Callable[[String], Integer], lst: List[String]) -> List[Integer]:
     res = []
     for e in lst:
         res.append(f(e))
@@ -34,13 +25,8 @@ def string_to_int_map(f, lst):
 check_contract(string_to_int_map)
 
 
-@contract(
-    Function(
-        arguments=(Function(arguments=[Integer()], result=Boolean()), List(Integer())),
-        result=List(Integer()),
-    )
-)
-def integer_filter(f, lst):
+@contract()
+def integer_filter(f: Callable[[Integer], Boolean], lst: List[Integer]) -> List[Integer]:
     res = []
     for e in lst:
         if f(e):
@@ -51,17 +37,8 @@ def integer_filter(f, lst):
 check_contract(integer_filter)
 
 
-@contract(
-    Function(
-        arguments=(
-            Function(arguments=(Integer(), Integer()), result=Integer()),
-            Integer(),
-            List(Integer()),
-        ),
-        result=Integer(),
-    )
-)
-def fold_int(f, acc, lst):
+@contract()
+def fold_int(f: Callable[[Integer, Integer], Integer], acc: Integer, lst: List[Integer]) -> Integer:
     for e in lst:
         acc = f(e, acc)
     return acc

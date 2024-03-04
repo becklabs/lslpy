@@ -1,13 +1,11 @@
 import random
 from lslpy.contracts import contract, check_contract
-from lslpy.contracts.derived import Natural, Real
-from lslpy.contracts.primitives import Function, Immediate
+from lslpy.contracts.aliases import  Natural, Real
+from lslpy.contracts.primitives import  Immediate
 
 
-@contract(
-    Function(arguments=(Natural(), Natural()), result=Real(), raises=ZeroDivisionError)
-)
-def divide(x, y):
+@contract(raises=ZeroDivisionError)
+def divide(x: Natural, y: Natural) -> Real:
     return x / y
 
 
@@ -19,8 +17,8 @@ NonZeroInt = Immediate(
 )
 
 
-@contract(Function(arguments=(Natural(), NonZeroInt), result=Real()))
-def divide_safe(x, y):
+@contract()
+def divide_safe(x: Natural, y: NonZeroInt) -> Real:
     return x / y
 
 

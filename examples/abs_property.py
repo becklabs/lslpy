@@ -1,10 +1,9 @@
 from lslpy.contracts import contract, check_contract
-from lslpy.contracts.derived import Integer, Natural, true
-from lslpy.contracts.primitives import Function
+from lslpy.contracts.aliases import Integer, Natural, Constant
 
 
-@contract(Function(arguments=(Integer(),), result=Natural()))
-def my_abs(x):
+@contract(raises=BaseException)
+def my_abs(x: Integer) -> Natural:
     if x < 0:
         return -x
     else:
@@ -14,8 +13,8 @@ def my_abs(x):
 check_contract(my_abs)
 
 
-@contract(Function(arguments=(Integer(),), result=true()))
-def my_abs_prop(x):
+@contract()
+def my_abs_prop(x: Integer) -> Constant[True]:
     res = my_abs(x)
     return res >= x
 

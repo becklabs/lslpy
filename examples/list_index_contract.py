@@ -1,24 +1,16 @@
 from lslpy.contracts import contract, check_contract
-from lslpy.contracts.primitives import Function, OneOf, List
-from lslpy.contracts.derived import Integer, Constant, Natural, true
+
+from lslpy.contracts.aliases import  List, Integer, OneOf, Natural, Constant
 
 
-@contract(
-    Function(
-        arguments=(List(Integer()), Integer()), result=OneOf(Natural(), Constant(False))
-    )
-)
-def my_list_index(lst, value):
+def my_list_index(lst: List[Integer], value: Integer) -> OneOf[Natural, Constant[False]]:
     if value in lst:
         return lst.index(value)
     else:
         return False
 
-@contract(
-    Function(
-        arguments=(List(Integer()), Integer()), result=true())
-)
-def my_list_index_prop(lst, value):
+@contract()
+def my_list_index_prop(lst: List[Integer], value: Integer) -> Constant[True]:
     res = my_list_index(lst, value)
     if value in lst and lst[res] == value:
         return True
