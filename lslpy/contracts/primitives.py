@@ -71,7 +71,11 @@ class _Function(Contract):
     def __getitem__(self, param):
         arguments = param[0]
         result = param[1]
-        return _Function(arguments=arguments, result=result)
+        if len(param) == 3:
+            raises = param[2]
+        else:
+            raises = None
+        return _Function(arguments=arguments, result=result, raises=raises)
 
 
 class _List(Contract):

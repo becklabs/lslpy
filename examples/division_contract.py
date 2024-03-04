@@ -17,7 +17,7 @@ NonZeroInt = Immediate(
 )
 
 
-@contract()
+@contract
 def divide_safe(x: Natural, y: NonZeroInt) -> Real:
     return x / y
 

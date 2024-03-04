@@ -13,7 +13,7 @@ def my_abs(x: Integer) -> Natural:
 check_contract(my_abs)
 
 
-@contract()
+@contract
 def my_abs_prop(x: Integer) -> Constant[True]:
     res = my_abs(x)
     return res >= x

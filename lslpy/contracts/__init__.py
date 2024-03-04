@@ -7,21 +7,25 @@ from .exceptions import ContractViolation
 CHECK_CONTRACT_FUEL = 100
 
 
-def contract(raises: BaseException | None = None):
+def contract(raises: BaseException):
     """
     Decorates a python function to impose a contract
     """
+    func_or_raises = raises
+    return_wrapper = inspect.isclass(func_or_raises) and issubclass(func_or_raises, BaseException)
 
     def wrapper(function: callable):
         annotations = inspect.get_annotations(function)
         result = annotations.pop("return")
         arguments = tuple(annotations.values())
-        function_contract = _Function(arguments=arguments, result=result, raises=raises)
+        function_contract = _Function(arguments=arguments, result=result, raises=func_or_raises if return_wrapper else None)
         function_contract.visit(function)
         return function_contract
     
-    return wrapper
-
+    if return_wrapper:
+        return wrapper
+    else:
+        return wrapper(func_or_raises)
 
 
 def check_contract(func: Callable, attempts: int = 100):
