@@ -4,31 +4,26 @@ import string
 from .primitives import Immediate
 
 
-class Constant(Immediate):
+class _Constant(Immediate):
     def __init__(self, value):
         super().__init__(check=lambda x: x is value, generate=lambda fuel: value)
         self.value = value
 
-
-class true(Constant):
-    def __init__(self) -> None:
-        super().__init__(True)
+    def __getitem__(self, param):
+        return _Constant(param)
 
 
-class false(Constant):
-    def __init__(self) -> None:
-        super().__init__(False)
-
-
-class Boolean(Immediate):
+class _Boolean(Immediate):
     def __init__(self):
         super().__init__(
-            check=lambda x: true().check(x) or false().check(x),
-            generate=lambda fuel: random.choice([true(), false()]).generate(fuel),
+            check=lambda x: _Constant(True).check(x) or _Constant(False).check(x),
+            generate=lambda fuel: random.choice(
+                [_Constant(True), _Constant(False)]
+            ).generate(fuel),
         )
 
 
-class Natural(Immediate):
+class _Natural(Immediate):
     def __init__(self):
         super().__init__(
             check=lambda x: isinstance(x, int) and x >= 0,
@@ -36,7 +31,7 @@ class Natural(Immediate):
         )
 
 
-class Integer(Immediate):
+class _Integer(Immediate):
     def __init__(self):
         super().__init__(
             check=lambda x: isinstance(x, int),
@@ -44,7 +39,7 @@ class Integer(Immediate):
         )
 
 
-class Real(Immediate):
+class _Real(Immediate):
     def __init__(self):
         super().__init__(
             check=lambda x: isinstance(x, float),
@@ -52,21 +47,23 @@ class Real(Immediate):
         )
 
 
-class String(Immediate):
+class _String(Immediate):
     def __init__(self):
         super().__init__(
             check=lambda x: isinstance(x, str),
             generate=lambda fuel: "".join(
-                random.choices(string.ascii_letters + string.digits, k=random.randint(0, fuel))
+                random.choices(
+                    string.ascii_letters + string.digits, k=random.randint(0, fuel)
+                )
             ),
         )
 
 
-class Any(Immediate):
+class _Any(Immediate):
     def __init__(self):
         super().__init__(
             check=lambda x: True,
             generate=lambda fuel: random.choice(
-                [Boolean(), Integer(), Real(), Natural(), String()]
+                [_Boolean(), _Integer(), _Real(), _Natural(), _String()]
             ).generate(fuel),
         )

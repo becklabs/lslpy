@@ -24,12 +24,11 @@ Property-based testing of `reverse`:
 
 ```python
 from lslpy.contracts import check_contract, contract
-from lslpy.contracts.derived import Integer, true
-from lslpy.contracts.primitives import Function, List
+from lslpy.contracts.aliases import  List, Integer, Constant
 
 
-@contract(Function(arguments=(List(Integer()),), result=List(Integer())))
-def my_reverse(l):
+@contract
+def my_reverse(l: List[Integer]) -> List[Integer]:
     l.reverse()
     return l
 
@@ -37,8 +36,8 @@ def my_reverse(l):
 check_contract(my_reverse)
 
 
-@contract(Function(arguments=(List(Integer()), List(Integer())), result=true()))
-def my_reverse_prop(l1, l2):
+@contract
+def my_reverse_prop(l1: List[Integer], l2: List[Integer]) -> Constant[True]:
     return my_reverse(l1 + l2) == my_reverse(l2) + my_reverse(l1)
 
 
