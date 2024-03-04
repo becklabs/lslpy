@@ -36,12 +36,11 @@ class _Function(Contract):
     def visit(self, func: callable):
         self.func = func
 
-    def __call__(self, *args):
-        # TODO: Implement support for keyword args
+    def __call__(self, *args, **kwargs):
+        args = args + tuple(kwargs.values())
         if self.arguments is not None:
             for arg, contract in zip(args, self.arguments):
                 if not contract.check(arg):
-                    # TODO: Improve contract violation messages
                     raise ContractViolation(
                         f"{self.func} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(args)})"
                     )
@@ -85,7 +84,6 @@ class _List(Contract):
         self.contract = contract
 
     def check(self, x):
-        # TODO: decide whether to check if type == list here
         return is_iterable(x) and (
             self.contract is None or all([self.contract.check(e) for e in x])
         )
@@ -102,7 +100,6 @@ class _Tuple(Contract):
         self.contracts = contracts
 
     def check(self, x):
-        # TODO: decide whether to check if type == tuple here
         return is_iterable(x) and (
             self.contracts == (None,)
             or all([contract.check(e) for e, contract in zip(x, self.contracts)])
