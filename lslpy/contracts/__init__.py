@@ -41,3 +41,5 @@ def check_contract(func: Callable, attempts: int = 100):
 
 def contract_generate(c: Contract, fuel: int):
     return c.generate(fuel)
+
+

@@ -1,6 +1,8 @@
 import random
 import string
 
+from z3 import Bool, BoolVal, Float64, Int, IntVal, String
+
 from .primitives import Immediate
 
 
@@ -12,6 +14,14 @@ class _Constant(Immediate):
     def __getitem__(self, param):
         return _Constant(param)
 
+    def symbolic(self, name: str | None = None):
+        if isinstance(self.value, bool):
+            return BoolVal(self.value)
+        elif isinstance(self.value, int):
+            return IntVal(self.value)
+        else:
+            return super().symbolic(name)
+
 
 class _Boolean(Immediate):
     def __init__(self):
@@ -21,6 +31,9 @@ class _Boolean(Immediate):
                 [_Constant(True), _Constant(False)]
             ).generate(fuel),
         )
+
+    def symbolic(self, name: str | None = None):
+        return Bool(name)
 
 
 class _Natural(Immediate):
@@ -38,6 +51,9 @@ class _Integer(Immediate):
             generate=lambda fuel: random.randint(-fuel, fuel),
         )
 
+    def symbolic(self, name: str | None = None):
+        return Int(name)
+
 
 class _Real(Immediate):
     def __init__(self):
@@ -45,6 +61,9 @@ class _Real(Immediate):
             check=lambda x: isinstance(x, float),
             generate=lambda fuel: random.uniform(-fuel, fuel),
         )
+
+    def symbolic(self, name: str | None = None):
+        return Float64(name)
 
 
 class _String(Immediate):
@@ -57,6 +76,9 @@ class _String(Immediate):
                 )
             ),
         )
+
+    def symbolic(self, name: str | None = None):
+        return String(name)
 
 
 class _Any(Immediate):
