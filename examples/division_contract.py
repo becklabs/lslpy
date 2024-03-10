@@ -1,6 +1,6 @@
 import random
-from lslpy.contracts import contract, check_contract
-from lslpy.contracts.aliases import  Natural, Real
+from lslpy import contract, check_contract
+from lslpy.contracts import  Natural, Real
 from lslpy.contracts.primitives import  Immediate
 
 

@@ -1,5 +1,5 @@
-from lslpy.contracts import contract, check_contract
-from lslpy.contracts.aliases import Integer, Natural, Constant
+from lslpy import contract, check_contract
+from lslpy.contracts import Integer, Natural, Constant
 
 
 @contract(raises=BaseException)

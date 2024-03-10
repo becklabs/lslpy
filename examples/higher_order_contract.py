@@ -1,6 +1,6 @@
-from lslpy.contracts import contract, check_contract
+from lslpy import contract, check_contract
 
-from lslpy.contracts.aliases import Callable, Any, List, String, Integer, Boolean
+from lslpy.contracts import Callable, Any, List, String, Integer, Boolean
 
 
 @contract
