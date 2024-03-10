@@ -6,8 +6,6 @@ from .base import Contract
 from .exceptions import ContractViolation, GenerateError
 from .util import format_contract, is_iterable
 
-from ..verification.transformer import Z3Transformer
-
 
 class Immediate(Contract):
     def __init__(
