@@ -1,5 +1,6 @@
-from .derived import _Constant, _Boolean, _Natural, _Integer, _Real, _String, _Any
-from .primitives import _Function, _List, _Tuple, _OneOf, _AllOf
+from .derived import (_Any, _Boolean, _Constant, _Integer, _Natural, _Real,
+                      _String)
+from .primitives import _AllOf, _Function, _List, _OneOf, _Tuple
 
 Constant = _Constant(None)
 

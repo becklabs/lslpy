@@ -4,12 +4,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "lslpy"
-version = "0.0.1"
-description = "A Python library for contracting and property-based testing in Python, inspired by LSL."
+version = "0.0.2"
+description = "A Python library for contracts, property-based testing, and verification via symbolic execution, inspired by LSL."
 authors = ["Beck LaBash <labash.b@northeastern.edu>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+z3-solver = "4.12.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

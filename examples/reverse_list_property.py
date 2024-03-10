@@ -1,5 +1,5 @@
-from lslpy.contracts import check_contract, contract
-from lslpy.contracts.aliases import  List, Integer, Constant
+from lslpy import check_contract, contract
+from lslpy.contracts import  List, Integer, Constant
 
 
 @contract

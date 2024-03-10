@@ -1,8 +1,10 @@
 import inspect
-from .base import Contract
-from .primitives import _Function
-from .exceptions import ContractViolation
+
 from .aliases import *
+from .base import Contract
+from .exceptions import ContractViolation
+from .primitives import _Function
+from .util import format_func
 
 CHECK_CONTRACT_FUEL = 100
 
@@ -41,7 +43,7 @@ def check_contract(func: Callable, attempts: int = 100):
             func(*args)
         except ContractViolation as e:
             raise ContractViolation(
-                f"Found counterexample: {func.func}({', '.join([str(a) for a in args])})"
+                f"Found counterexample: {format_func(func.func)}({', '.join([str(a) for a in args])})"
             ) from e
 
 

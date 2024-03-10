@@ -1,5 +1,3 @@
-import ast
-import inspect
 import random
 
 from .base import Contract
@@ -80,8 +78,6 @@ class _Function(Contract):
 
 
 class _List(Contract):
-    from .derived import _Any
-
     def __init__(self, contract: Contract | None = None):
         self.contract = contract
 

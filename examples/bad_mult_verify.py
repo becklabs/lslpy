@@ -1,6 +1,5 @@
-from lslpy.contracts import contract
-from lslpy import verify_contract
-from lslpy.contracts.aliases import Integer, Constant
+from lslpy import contract, verify_contract
+from lslpy.contracts import Integer, Constant
 
 @contract
 def bad_mult(x: Integer, y: Integer) -> Integer:
@@ -10,10 +9,6 @@ def bad_mult(x: Integer, y: Integer) -> Integer:
 def bad_mult_prop(x: Integer, y: Integer) -> Constant[True]:
     return bad_mult(x, y) == x * y
 
-@contract
-def contracted_foo(x: Integer, y: Integer) -> Constant[1]:
-    return x + y
-
-verify_contract(contracted_foo, global_vars=globals())
+verify_contract(bad_mult_prop, global_vars=globals())
 
 

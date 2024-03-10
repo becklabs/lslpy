@@ -1,9 +1,10 @@
-import textwrap
-import inspect
 import ast
+import inspect
+import textwrap
 
-from z3 import And, IntVal, BoolVal, Or, StringVal, If
 from ..contracts.primitives import _Function
+from z3 import And, BoolVal, If, IntVal, Or, StringVal
+
 
 
 class Z3Transformer(ast.NodeVisitor):

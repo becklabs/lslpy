@@ -1,11 +1,13 @@
-import textwrap
-import unittest
-from lslpy.verification.transformer import Z3Transformer
-from lslpy.contracts.aliases import Integer, Constant
-from lslpy.contracts import contract
 import ast
 import inspect
+import textwrap
+import unittest
+
 import z3
+
+from lslpy.contracts import contract
+from lslpy.contracts.aliases import Constant, Integer
+from lslpy.verification.transformer import Z3Transformer
 
 
 def get_value(node: ast.Module):
