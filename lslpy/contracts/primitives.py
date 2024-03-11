@@ -39,10 +39,14 @@ class _Function(Contract):
     def __call__(self, *args, **kwargs):
         args = args + tuple(kwargs.values())
         if self.arguments is not None:
+            if len(self.arguments) != len(args):
+                    raise ContractViolation(
+                        f"{format_func(self.func)} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(map(str, args))})"
+                    )
             for arg, contract in zip(args, self.arguments):
                 if not contract.check(arg):
                     raise ContractViolation(
-                        f"{format_func(self.func)} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(args)})"
+                        f"{format_func(self.func)} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(map(str, args))})"
                     )
             try:
                 result = self.func(*args)
@@ -65,7 +69,11 @@ class _Function(Contract):
         return callable(x)
 
     def generate(self, fuel):
-        return lambda *args: self.result.generate(fuel)
+        def generated_func(*args, **kwargs):
+            return self.result.generate(fuel)
+        contract = _Function(arguments=self.arguments, result=self.result, raises=self.raises)
+        contract.visit(generated_func)
+        return contract
 
     def __getitem__(self, param):
         arguments = param[0]
