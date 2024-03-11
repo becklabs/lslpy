@@ -20,6 +20,8 @@ class TestDerivedContracts(unittest.TestCase):
         self.assertTrue(Integer.check(1))
         self.assertTrue(Integer.check(-1))
         self.assertFalse(Integer.check(1.5))
+        self.assertFalse(Integer.check(False))
+        self.assertFalse(Integer.check(True))
         self.assertTrue(isinstance(Integer.generate(1), int))
 
     def test_real(self):

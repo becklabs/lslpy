@@ -39,7 +39,7 @@ class _Boolean(Immediate):
 class _Natural(Immediate):
     def __init__(self):
         super().__init__(
-            check=lambda x: isinstance(x, int) and x >= 0,
+            check=lambda x: type(x) is int and x >= 0,
             generate=lambda fuel: random.randint(0, fuel),
         )
 
@@ -47,7 +47,7 @@ class _Natural(Immediate):
 class _Integer(Immediate):
     def __init__(self):
         super().__init__(
-            check=lambda x: isinstance(x, int),
+            check=lambda x: type(x) is int,
             generate=lambda fuel: random.randint(-fuel, fuel),
         )
 
