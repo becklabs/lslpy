@@ -19,7 +19,8 @@ def contract(raises: BaseException):
     )
 
     def wrapper(function: callable):
-        annotations = inspect.get_annotations(function)
+        arg_info = inspect.getfullargspec(function)
+        annotations = {arg:arg_info.annotations.get(arg, Any) for arg in arg_info.args + ['return']}
         result = annotations.pop("return")
         arguments = tuple(annotations.values())
         function_contract = _Function(
