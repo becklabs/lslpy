@@ -29,6 +29,22 @@ class TestPrimitiveContracts(unittest.TestCase):
         with self.assertRaises(ContractViolation):
             contract(False)
 
+        with self.assertRaises(ContractViolation):
+            contract(True, True)
+        
+        generated_func = contract.generate(0)
+        self.assertTrue(generated_func(True))
+        self.assertTrue(generated_func(False))
+
+        # Wrong argument contract
+        with self.assertRaises(ContractViolation):
+            generated_func(1)
+
+        # Wrong number of arguments
+        with self.assertRaises(ContractViolation):
+            generated_func(False, False)
+        
+
     def test_list(self):
         contract = List[Natural]
         self.assertTrue(contract.check([1, 2, 3]))
