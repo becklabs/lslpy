@@ -9,6 +9,8 @@ class TestDerivedContracts(unittest.TestCase):
         self.assertTrue(Boolean.check(True))
         self.assertTrue(Boolean.check(False))
         self.assertFalse(Boolean.check(1))
+        self.assertFalse(Boolean.check(1.0))
+        self.assertFalse(Boolean.check("False"))
 
     def test_natural(self):
         self.assertTrue(Natural.check(1))
@@ -33,6 +35,7 @@ class TestDerivedContracts(unittest.TestCase):
     def test_string(self):
         self.assertTrue(String.check("test"))
         self.assertFalse(String.check(1))
+        self.assertFalse(String.check(1.0))
         self.assertFalse(String.check(True))
 
     def test_any(self):
