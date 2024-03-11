@@ -2,7 +2,7 @@ import random
 
 from .base import Contract
 from .exceptions import ContractViolation, GenerateError
-from .util import format_contract, format_func, is_iterable
+from .util import format_contract, is_iterable
 
 
 class Immediate(Contract):
@@ -42,19 +42,19 @@ class _Function(Contract):
             for arg, contract in zip(args, self.arguments):
                 if not contract.check(arg):
                     raise ContractViolation(
-                        f"{format_func(self.func)} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(args)})"
+                        f"{self.func} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(args)})"
                     )
             try:
                 result = self.func(*args)
                 if self.result is not None:
                     if not self.result.check(result):
                         raise ContractViolation(
-                            f"{format_func(self.func)} returned {result}, expected {format_contract(self.result)}"
+                            f"{self.func} returned {result}, expected {format_contract(self.result)}"
                         )
             except Exception as e:
                 if self.raises is not None and not isinstance(e, self.raises):
                     raise ContractViolation(
-                        f"{format_func(self.func)} returned {e}, expected {self.raises}"
+                        f"{self.func} returned {e}, expected {self.raises}"
                     ) from e
                 else:
                     raise e
