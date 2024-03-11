@@ -44,7 +44,7 @@ def my_reverse_prop(l1: List[Integer], l2: List[Integer]) -> Constant[True]:
 check_contract(my_reverse_prop)
 ```
 
-Verification of `bad-mult` via symbolic execution:
+Verification of `bad_mult` via symbolic execution:
 
 ```python
 from lslpy import contract, verify_contract
