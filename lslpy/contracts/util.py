@@ -24,7 +24,7 @@ def format_contract(c: Contract):
         return f"Constant({str(c.value)})"
 
     else:
-        return c.__class__.__name__[1:]
+        return c.__class__.__name__
 
 
 def format_func(func: callable):
