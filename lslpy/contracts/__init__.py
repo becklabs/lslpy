@@ -1,4 +1,5 @@
 import inspect
+import typing
 
 from .aliases import *
 from .base import Contract
@@ -9,14 +10,10 @@ from .util import format_func
 CHECK_CONTRACT_FUEL = 100
 
 
-def contract(raises: BaseException):
+def contract(func: typing.Union[callable, None] = None, raises: BaseException | None = None):
     """
     Decorates a python function to impose a contract
     """
-    func_or_raises = raises
-    return_wrapper = inspect.isclass(func_or_raises) and issubclass(
-        func_or_raises, BaseException
-    )
 
     def wrapper(function: callable):
         arg_info = inspect.getfullargspec(function)
@@ -26,15 +23,16 @@ def contract(raises: BaseException):
         function_contract = _Function(
             arguments=arguments,
             result=result,
-            raises=func_or_raises if return_wrapper else None,
+            raises=raises,
         )
         function_contract.visit(function)
         return function_contract
-
-    if return_wrapper:
-        return wrapper
+    
+    if func is not None:
+        assert callable(func)
+        return wrapper(func)
     else:
-        return wrapper(func_or_raises)
+        return wrapper
 
 
 def check_contract(func: Callable, attempts: int = 100):
