@@ -44,10 +44,15 @@ def check_contract(func: Callable, attempts: int = 100):
         args = [arg.generate(CHECK_CONTRACT_FUEL) for arg in func.arg_contracts]
         try:
             func(*args)
-        except ContractViolation as e:
-            raise ContractViolation(
-                f"Found counterexample: {format_func(func.func)}({', '.join([str(a) for a in args])})"
-            ) from e
+        except Exception as e:
+            if func.raises is not None and isinstance(e, func.raises):
+                continue
+            elif isinstance(e, ContractViolation):
+                raise ContractViolation(
+                    f"Found counterexample: {format_func(func.func)}({', '.join([str(a) for a in args])})"
+                ) from e
+            else:
+                raise e
 
 
 def contract_generate(c: Contract, fuel: int):
