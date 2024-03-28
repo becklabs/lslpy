@@ -19,9 +19,8 @@ def contract(func: typing.Union[callable, None] = None, raises: BaseException | 
         arg_info = inspect.getfullargspec(function)
         annotations = {arg:arg_info.annotations.get(arg, Any) for arg in arg_info.args + ['return']}
         result = annotations.pop("return")
-        arguments = tuple(annotations.values())
         function_contract = _Function(
-            arguments=arguments,
+            kwargs=annotations,
             result=result,
             raises=raises,
         )
@@ -37,7 +36,7 @@ def contract(func: typing.Union[callable, None] = None, raises: BaseException | 
 
 def check_contract(func: Callable, attempts: int = 100):
     for _ in range(attempts):
-        args = [arg.generate(CHECK_CONTRACT_FUEL) for arg in func.arguments]
+        args = [arg.generate(CHECK_CONTRACT_FUEL) for arg in func.arg_contracts]
         try:
             func(*args)
         except ContractViolation as e:
