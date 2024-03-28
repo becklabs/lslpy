@@ -10,5 +10,3 @@ def bad_mult_prop(x: Integer, y: Integer) -> Constant[True]:
     return bad_mult(x, y) == x * y
 
 verify_contract(bad_mult_prop, global_vars=globals())
-
-
