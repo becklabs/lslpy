@@ -31,6 +31,7 @@ class _Function(Contract):
         kwargs: dict[str, Contract] | None = None,
         result: Contract | None = None,
         raises: BaseException | None = None,
+        enabled: bool = True
     ):
         self.args = args
         self.kwargs = kwargs
@@ -42,12 +43,16 @@ class _Function(Contract):
             self.arg_contracts = ()
         self.result = result
         self.raises = raises
+        self.enabled = enabled
         self.func: callable | None = None
 
     def visit(self, func: callable):
         self.func = func
 
     def __call__(self, *args, **kwargs):
+        if not self.enabled:
+            return self.func(*args, **kwargs)
+
         call_contracts: list[Contract]
         call_args = args + tuple(kwargs.values())
 

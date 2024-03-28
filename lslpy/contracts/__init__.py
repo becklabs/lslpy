@@ -10,23 +10,28 @@ from .util import format_func
 CHECK_CONTRACT_FUEL = 100
 
 
-def contract(func: typing.Union[callable, None] = None, raises: BaseException | None = None):
+def contract(
+    func: typing.Union[callable, None] = None,
+    raises: BaseException | None = None,
+    enabled: bool = True,
+):
     """
     Decorates a python function to impose a contract
     """
 
     def wrapper(function: callable):
         arg_info = inspect.getfullargspec(function)
-        annotations = {arg:arg_info.annotations.get(arg, Any) for arg in arg_info.args + ['return']}
+        annotations = {
+            arg: arg_info.annotations.get(arg, Any)
+            for arg in arg_info.args + ["return"]
+        }
         result = annotations.pop("return")
         function_contract = _Function(
-            kwargs=annotations,
-            result=result,
-            raises=raises,
+            kwargs=annotations, result=result, raises=raises, enabled=enabled
         )
         function_contract.visit(function)
         return function_contract
-    
+
     if func is not None:
         assert callable(func)
         return wrapper(func)
