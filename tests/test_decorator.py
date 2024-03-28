@@ -2,19 +2,12 @@ import unittest
 from lslpy import contract, check_contract
 
 from lslpy.contracts.aliases import (
-    AllOf,
-    Boolean,
-    Callable,
     Constant,
     Integer,
     Real,
-    List,
     Natural,
-    OneOf,
-    Tuple,
 )
-from lslpy.contracts.exceptions import ContractViolation, GenerateError
-from lslpy.contracts.primitives import Immediate
+from lslpy.contracts.exceptions import ContractViolation
 
 class TestContract(unittest.TestCase):
 
@@ -50,3 +43,19 @@ class TestContract(unittest.TestCase):
 
         with self.assertRaises(ContractViolation):
             check_contract(bar, attempts=1)
+    
+    def test_contract_enabled(self):
+
+        @contract(enabled=False)
+        def foo() -> Constant[True]:
+            return False
+
+        @contract
+        def bar() -> Constant[True]:
+            return False
+        
+        check_contract(foo)
+
+        with self.assertRaises(ContractViolation):
+            check_contract(bar, attempts=1)
+
