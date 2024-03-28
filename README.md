@@ -4,7 +4,7 @@
 
 ## Installation
 
-lslpy requires `python3.9` or higher.
+lslpy requires `python3.10` or higher.
 
 1. Clone the repository and move into its directory:
 
