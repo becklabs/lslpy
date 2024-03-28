@@ -2,7 +2,10 @@ import random
 
 from .base import Contract
 from .exceptions import ContractViolation, GenerateError
-from .util import format_contract, format_func, is_iterable
+from .util import (
+    format_func,
+    is_iterable,
+)
 
 
 class Immediate(Contract):
@@ -24,45 +27,86 @@ class Immediate(Contract):
 class _Function(Contract):
     def __init__(
         self,
-        arguments: tuple[Contract] | None = None,
+        args: tuple[Contract] | None = None,
+        kwargs: dict[str, Contract] | None = None,
         result: Contract | None = None,
         raises: BaseException | None = None,
+        enabled: bool = True,
+        partial: bool = False
     ):
-        self.arguments = arguments
+        self.args = args
+        self.kwargs = kwargs
+        if self.args is not None:
+            self.arg_contracts = args
+        elif self.kwargs is not None:
+            self.arg_contracts = tuple(kwargs.values())
+        else:
+            self.arg_contracts = ()
         self.result = result
         self.raises = raises
+        self.enabled = enabled
+        self.partial = partial
         self.func: callable | None = None
 
     def visit(self, func: callable):
         self.func = func
 
     def __call__(self, *args, **kwargs):
-        args = args + tuple(kwargs.values())
-        if self.arguments is not None:
-            if len(self.arguments) != len(args):
-                    raise ContractViolation(
-                        f"{format_func(self.func)} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(map(str, args))})"
-                    )
-            for arg, contract in zip(args, self.arguments):
+        if not self.enabled:
+            return self.func(*args, **kwargs)
+
+        call_contracts: list[Contract]
+        call_args = args + tuple(kwargs.values())
+
+        # Function was constructed with Callable
+        if self.args is not None:
+            call_contracts = self.args
+
+        # Function was constructed with @contract decorator
+        elif self.kwargs is not None:
+            if len(args) > len(self.kwargs):
+                raise TypeError(f"{format_func(self.func)}() takes {len(self.kwargs)} positional arguments but {len(args)} were given")
+            call_contracts = list(self.kwargs.values())[: len(args)]
+            for kwarg in kwargs:
+                kwarg_contract = self.kwargs.get(kwarg, None)
+                if kwarg_contract is None:
+                    raise ValueError(f"Unexpected keyword argument '{kwarg}'")
+                call_contracts.append(kwarg_contract)
+
+        else:
+            call_contracts = []
+
+        if not (self.args is None and self.kwargs is None):
+            if len(call_args) != len(call_contracts):
+                raise ContractViolation.from_invalid_args(
+                    func=self.func, call_args=call_args, call_contracts=call_contracts
+                )
+
+            for arg, contract in zip(call_args, call_contracts):
                 if not contract.check(arg):
-                    raise ContractViolation(
-                        f"{format_func(self.func)} expected ({', '.join([format_contract(c) for c in self.arguments])}), got ({', '.join(map(str, args))})"
+                    raise ContractViolation.from_invalid_args(
+                        func=self.func,
+                        call_args=call_args,
+                        call_contracts=call_contracts,
                     )
-            try:
-                result = self.func(*args)
-                if self.result is not None:
-                    if not self.result.check(result):
-                        raise ContractViolation(
-                            f"{format_func(self.func)} returned {result}, expected {format_contract(self.result)}"
-                        )
-            except Exception as e:
-                if self.raises is not None and not isinstance(e, self.raises):
-                    raise ContractViolation(
-                        f"{format_func(self.func)} returned {e}, expected {self.raises}"
-                    ) from e
-                else:
-                    raise e
-            return result
+
+        try:
+            result = self.func(*args, **kwargs)
+            if self.result is not None:
+                if not self.result.check(result):
+                    raise ContractViolation.from_invalid_return(
+                        func=self.func,
+                        func_result=result,
+                        result_contract=self.result,
+                    )
+        except Exception as e:
+            if self.raises is not None and not isinstance(e, self.raises):
+                raise ContractViolation.from_invalid_exception(
+                    func=self.func, exc=e, expected_exc=self.raises
+                ) from e
+            else:
+                raise e
+        return result
 
     def check(self, x):
         self.visit(x)  # Impose a check later
@@ -71,7 +115,10 @@ class _Function(Contract):
     def generate(self, fuel):
         def generated_func(*args, **kwargs):
             return self.result.generate(fuel)
-        contract = _Function(arguments=self.arguments, result=self.result, raises=self.raises)
+
+        contract = _Function(
+            args=self.args, kwargs=self.kwargs, result=self.result, raises=self.raises
+        )
         contract.visit(generated_func)
         return contract
 
@@ -82,7 +129,7 @@ class _Function(Contract):
             raises = param[2]
         else:
             raises = None
-        return _Function(arguments=arguments, result=result, raises=raises)
+        return _Function(args=arguments, result=result, raises=raises)
 
 
 class _List(Contract):
