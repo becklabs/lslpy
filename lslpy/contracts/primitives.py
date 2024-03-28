@@ -31,7 +31,8 @@ class _Function(Contract):
         kwargs: dict[str, Contract] | None = None,
         result: Contract | None = None,
         raises: BaseException | None = None,
-        enabled: bool = True
+        enabled: bool = True,
+        partial: bool = False
     ):
         self.args = args
         self.kwargs = kwargs
@@ -44,6 +45,7 @@ class _Function(Contract):
         self.result = result
         self.raises = raises
         self.enabled = enabled
+        self.partial = partial
         self.func: callable | None = None
 
     def visit(self, func: callable):

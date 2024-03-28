@@ -22,12 +22,18 @@ def contract(
     def wrapper(function: callable):
         arg_info = inspect.getfullargspec(function)
         annotations = {
-            arg: arg_info.annotations.get(arg, Any)
+            arg: arg_info.annotations.get(arg, None)
             for arg in arg_info.args + ["return"]
         }
+        partial = not all(annotations.values())
+        annotations = {
+            arg: annotations[arg] if arg is not None else Any
+            for arg in annotations
+        }
+
         result = annotations.pop("return")
         function_contract = _Function(
-            kwargs=annotations, result=result, raises=raises, enabled=enabled
+            kwargs=annotations, result=result, raises=raises, enabled=enabled, partial=partial
         )
         function_contract.visit(function)
         return function_contract
@@ -40,6 +46,8 @@ def contract(
 
 
 def check_contract(func: Callable, attempts: int = 100):
+    if func.partial:
+        raise ValueError(f"Cannot check partial contract: {format_func(func.func)}")
     for _ in range(attempts):
         args = [arg.generate(CHECK_CONTRACT_FUEL) for arg in func.arg_contracts]
         try:

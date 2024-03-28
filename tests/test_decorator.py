@@ -58,4 +58,26 @@ class TestContract(unittest.TestCase):
 
         with self.assertRaises(ContractViolation):
             check_contract(bar, attempts=1)
+    
+    def test_partial_contract(self):
+        @contract
+        def foo(a: Integer, b: Integer) -> Integer:
+            return a + b
+
+        @contract
+        def bar(a: Integer, b) -> Integer:
+            return a + b
+            
+        @contract
+        def baz(a: Integer, b: Integer):
+            return a + b
+
+        check_contract(foo)
+
+        with self.assertRaises(ValueError):
+            check_contract(bar)
+
+        with self.assertRaises(ValueError):
+            check_contract(baz)
+
 
