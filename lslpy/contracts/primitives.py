@@ -159,7 +159,7 @@ class _Tuple(Contract):
         )
 
     def generate(self, fuel):
-        return (contract.generate(fuel) for contract in self.contracts)
+        return tuple(contract.generate(fuel) for contract in self.contracts)
 
     def __getitem__(self, params: tuple[Contract]):
         return _Tuple(*params)
